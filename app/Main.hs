@@ -1,6 +1,9 @@
 module Main where
 
-import Lib
+import System.Environment
 
-main :: IO ()
-main = someFunc
+import ParseCPP
+
+main = do
+	[file] <- getArgs
+	parseCPP file

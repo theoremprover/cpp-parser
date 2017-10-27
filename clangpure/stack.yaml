@@ -37,7 +37,6 @@ resolver: lts-9.10
 # will not be run. This is useful for tweaking upstream packages.
 packages:
 - '.'
-- clangpure
 
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
@@ -62,7 +61,11 @@ arch: x86_64
 #
 # Extra directories used by stack for building
 # extra-include-dirs: [/path/to/dir]
-# extra-lib-dirs: [/path/to/dir]
+extra-lib-dirs:
+  - C:\LLVM\lib
+  - C:\LLVM\bin
+  - C:\LLVM\lib\clang\3.8.1\lib\windows
+
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
