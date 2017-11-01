@@ -59,9 +59,8 @@ library
   include-dirs:        cbits/
   cc-options:          -Wall
   extra-libraries:     libclang
-  extra-lib-dirs:      C:\LLVM\lib,
-                       C:\LLVM\bin,
-                       C:\LLVM\lib\clang\3.8.1\lib\windows
+  extra-lib-dirs:      C:\clang\install-vstudio64\lib,
+                       C:\clang\install-vstudio64\bin
 
   ghc-options:         -Wall -O2
   if impl(ghc >= 8.0.0)

@@ -62,10 +62,9 @@ arch: x86_64
 # Extra directories used by stack for building
 # extra-include-dirs: [/path/to/dir]
 extra-lib-dirs:
-  - C:\LLVM\lib
-  - C:\LLVM\bin
-  - C:\LLVM\lib\clang\3.8.1\lib\windows
-
+  - C:\clang\install-vstudio64\lib
+  - C:\clang\install-vstudio64\bin
+ 
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
