@@ -17,18 +17,18 @@ parseCPP filepath options = do
 	tu <- parseTranslationUnit idx filepath options
 
 	let
+{-
 		elements = cursorDescendantsF
 			. folding ( \ c -> case catMaybes [matchKind @'CXXMethod c,matchKind @'FunctionDecl c] of
 				[] -> Nothing
 				mb_c:_ -> mb_c )
 			. filtered (isFromMainFile . rangeStart . cursorExtent)
 			. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
-{-
-	let funDecs = cursorDescendantsF
+-}
+	let elements = cursorDescendantsF
 		. folding (matchKind @'CXXMethod)
 		. filtered (isFromMainFile . rangeStart . cursorExtent) -- ...that are actually in the given file
 		. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
--}
 
 	BS.putStrLn $ BS.unlines (translationUnitCursor tu ^.. elements)
 
