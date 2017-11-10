@@ -9,6 +9,7 @@ import Language.C.Clang.Cursor.Typed
 import Control.Lens
 import qualified Data.ByteString.Char8 as BS
 import Data.Monoid
+import Data.Maybe
 
 parseCPP :: FilePath -> [String] -> IO ()
 parseCPP filepath options = do
@@ -17,14 +18,8 @@ parseCPP filepath options = do
 
 	let elements = cursorDescendantsF
 		. folding (matchKind @'CXXMethod)
-		. filtered (isFromMainFile . rangeStart . cursorExtent)
+		. filtered (isFromMainFile . rangeStart . cursorExtent) 
 		. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
-{-
-	let funDecs = cursorDescendantsF
-		. folding (matchKind @'CXXMethod)
-		. filtered (isFromMainFile . rangeStart . cursorExtent) -- ...that are actually in the given file
-		. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
--}
 
 	BS.putStrLn $ BS.unlines (translationUnitCursor tu ^.. elements)
 
