@@ -5,7 +5,6 @@
 module ParseCPP where
 
 import Language.C.Clang
-import qualified Language.C.Clang.Cursor as Cur
 import Language.C.Clang.Cursor.Typed
 import Control.Lens
 import qualified Data.ByteString.Char8 as BS
@@ -16,14 +15,10 @@ parseCPP filepath options = do
 	idx <- createIndex
 	tu <- parseTranslationUnit idx filepath options
 
-	let
-		matching_cursors c | (Cur.cursorKind c) `elem` [ CXXMethod,FunctionDecl ] = Just $ Cur.CursorK c
-		matching_cursors _ = Nothing
-
-		elements = cursorDescendantsF
-			. folding (map [matchKind @'CXXMethod,matchKind @'FunctionDecl])
-			. filtered (isFromMainFile . rangeStart . cursorExtent)
-			. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
+	let elements = cursorDescendantsF
+		. folding (matchKind @'CXXMethod)
+		. filtered (isFromMainFile . rangeStart . cursorExtent)
+		. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
 {-
 	let funDecs = cursorDescendantsF
 		. folding (matchKind @'CXXMethod)
