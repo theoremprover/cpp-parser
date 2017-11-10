@@ -5,11 +5,11 @@
 module ParseCPP where
 
 import Language.C.Clang
-import qualified Language.C.Clang.Cursor as Cur
 import Language.C.Clang.Cursor.Typed
 import Control.Lens
 import qualified Data.ByteString.Char8 as BS
 import Data.Monoid
+import Data.Maybe
 
 parseCPP :: FilePath -> [String] -> IO ()
 parseCPP filepath options = do
@@ -17,11 +17,10 @@ parseCPP filepath options = do
 	tu <- parseTranslationUnit idx filepath options
 
 	let
-		matching_cursors c | (Cur.cursorKind c) `elem` [ CXXMethod,FunctionDecl ] = Just $ Cur.CursorK c
-		matching_cursors _ = Nothing
-
 		elements = cursorDescendantsF
-			. folding (map [matchKind @'CXXMethod,matchKind @'FunctionDecl])
+			. folding ( \ c -> case catMaybes [matchKind @'CXXMethod c,matchKind @'FunctionDecl c] of
+				[] -> Nothing
+				mb_c:_ -> mb_c )
 			. filtered (isFromMainFile . rangeStart . cursorExtent)
 			. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
 {-
