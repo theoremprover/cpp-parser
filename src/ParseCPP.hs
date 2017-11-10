@@ -18,9 +18,10 @@ parseCPP filepath options = do
 
 	let
 		elements = cursorDescendantsF
-			. folding ( \ c -> case catMaybes [matchKind @'CXXMethod c,matchKind @'FunctionDecl c] of
-				[] -> Nothing
-				mb_c:_ -> mb_c )
+			. folding ( \ c -> case (matchKind @'CXXMethod c,matchKind @'FunctionDecl c) of
+				(_,Just _) -> Just c
+				(Just _,_) -> Just c
+				_ -> Nothing )
 			. filtered (isFromMainFile . rangeStart . cursorExtent)
 			. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
 {-
