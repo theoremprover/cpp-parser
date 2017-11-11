@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-tabs #-}
+
 {-
 stack build
 stack exec cpp-parser-exe -- test\src\Notepad_plus.cpp
