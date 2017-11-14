@@ -35,8 +35,8 @@ printTree i cur = case cursorExtent cur of
 		let tokens = case cursorExtent cur of
 			Nothing -> []
 			Just srcrange -> map (BS.unpack . tokenSpelling) $ tokenSetTokens $ tokenize srcrange
-		putStrLn $ ind i ++ "[" ++ show (cursorKind cur) ++ "] " ++
-			BS.unpack (cursorSpelling cur) ++ show tokens
+		putStrLn $ ind i ++ show (cursorKind cur) ++ {-" :: " ++ show (cursorType cur) ++ -} " " ++
+			BS.unpack (cursorSpelling cur) ++ " " ++ show tokens
 		forM_ (cursorChildren cur) $ printTree (i+1)
 	_ -> return ()
 	where
