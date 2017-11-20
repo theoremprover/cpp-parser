@@ -19,6 +19,7 @@ import qualified Data.ByteString.Char8 as BS
 import Data.Monoid
 import Data.Maybe
 import Control.Monad
+import System.FilePath
 
 parseCPP :: FilePath -> [String] -> IO ()
 parseCPP filepath options = do
@@ -28,9 +29,9 @@ parseCPP filepath options = do
 	BS.putStrLn $ BS.unlines (translationUnitCursor tu ^.. elems)
 --	printTree 0 $ translationUnitCursor tu
 
+{-
 allsrcs = False
 
-{-
 printTree i cur = case cursorExtent cur of
 	Just sourcerange | allsrcs || isFromMainFile (rangeStart sourcerange) -> do
 		let tokens = case cursorExtent cur of
@@ -42,13 +43,21 @@ printTree i cur = case cursorExtent cur of
 	_ -> return ()
 	where
 	ind i = concat $ take i (repeat "|   ")
--}
 
 elems = cursorDescendantsF
 	. folding (matchKind @'CXXMethod)
 --	. filtered (isFromMainFile . rangeStart . cursorExtent)
 	. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
+-}
 
+elems = cursorDescendantsF
+	. folding (matchKind @'CXXMethod)
+	. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec) <>
+		" [ " <> showLoc funDec <> " ]")
+
+showLoc cur = BS.pack (takeFileName file) <> ":" <> BS.pack (show line)
+	where
+	Location{..} = (spellingLocation.rangeStart.cursorExtent) cur
 {-
 
 elems :: Getting (Endo [BS.ByteString]) (CursorK 'TranslationUnit) BS.ByteString
