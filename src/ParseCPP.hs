@@ -11,9 +11,9 @@ stack exec cpp-parser-exe -- test\src\Notepad_plus.cpp
 module ParseCPP where
 
 import Language.C.Clang
-import Language.C.Clang.Cursor
+--import Language.C.Clang.Cursor
 import Language.C.Clang.Token
---import Language.C.Clang.Cursor.Typed
+import Language.C.Clang.Cursor.Typed
 import Control.Lens
 import qualified Data.ByteString.Char8 as BS
 import Data.Monoid
@@ -25,11 +25,12 @@ parseCPP filepath options = do
 	idx <- createIndex
 	tu  <- parseTranslationUnit idx filepath options
 
---	BS.putStrLn $ BS.unlines (translationUnitCursor tu ^.. elems)
-	printTree 0 $ translationUnitCursor tu
+	BS.putStrLn $ BS.unlines (translationUnitCursor tu ^.. elems)
+--	printTree 0 $ translationUnitCursor tu
 
 allsrcs = False
 
+{-
 printTree i cur = case cursorExtent cur of
 	Just sourcerange | allsrcs || isFromMainFile (rangeStart sourcerange) -> do
 		let tokens = case cursorExtent cur of
@@ -41,13 +42,12 @@ printTree i cur = case cursorExtent cur of
 	_ -> return ()
 	where
 	ind i = concat $ take i (repeat "|   ")
+-}
 
-{-
 elems = cursorDescendantsF
 	. folding (matchKind @'CXXMethod)
-	. filtered (isFromMainFile . rangeStart . cursorExtent)
+--	. filtered (isFromMainFile . rangeStart . cursorExtent)
 	. to (\funDec -> cursorSpelling funDec <> " :: " <> typeSpelling (cursorType funDec))
--}
 
 {-
 
